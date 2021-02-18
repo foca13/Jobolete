@@ -2,39 +2,45 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
-from utils import save_content_to_file
+from utils import read_json_file, save_content_to_file
 
 def get_soup_text(link, parser = 'lxml'):
-    
     """ CAT: retorna un 'soup element' a partir d'un localitzador uniforme de recursos (sigles URL en anglès)
         EN: returns a 'soup element' from a URL
-        input arguments: URL (string), parser (string) """
-    
+        
+        arguments: URL (str), parser (str)
+        returns: soup element 
+    """
     return BeautifulSoup(requests.get(link).text, parser)
 
+
 def get_names(bs_element, replacements = []):
-    
-    """ CAT: retorna 
+    """ CAT: retorna els noms
+        EN: 
+        returns: list of strings
     """
-    
     names = [name.text for name in bs_element]
     for char in replacements:
         names = [name.replace(char,'') for name in names]
     return names
 
+
 def find_items(soup, tag_id, tag_especific, case='m'):
+    """ CAT: troba els elements específics
+    """
     if case == 'M':
         return soup.find(*tag_id).findAll(*tag_especific)
     return soup.find(*tag_id).find_all(*tag_especific)
 
 def get_latin_names(names):
+    
     names_latin = []
     for bolet in names:
         link = 'https://www.google.com/search?q=' + bolet
         soup = get_soup_text(link)
         try:
-            find_name = soup.find_all('a', href=True, text=re.compile("Wikipedia"))
-            latin_name = re.findall(r'/wiki/(.*?)&', str(find_name[0]))[0].replace('_',' ')
+            [find_name] = soup.find_all('a', href=True, text=re.compile("Wikipedia"))
+            latin_name = re.findall(r'/wiki/(.*?)&', str(find_name))[0].replace('_',' ')
         except:
             response = soup.find_all('a')
             new_item = next(str(item) for item in response if 'wiki' in str(item))
@@ -44,14 +50,12 @@ def get_latin_names(names):
                 new_soup = get_soup_text(new_link)
                 latin_name = new_soup.find("div", {"class": 'mw-parser-output'}).find('i').text
             except AttributeError:
-                new_link = "https://es.wikipedia.org/wiki/" + new_name
-                new_soup = get_soup_text(new_link)
-                latin_name = new_soup.find("div", {"class": 'mw-parser-output'}).find('i').text
+                latin_name = new_name.replace("_"," ")
             except:
                 continue
         names_latin.append(latin_name)
     return names_latin
-        
+
 def main():
     df = pd.read_pickle('Noms/url comestibles')
 
@@ -66,8 +70,8 @@ def main():
 
     bolets_comestibles += ['Bolet de tinta','Mollerons','Cogomella']
 
-    excepcions_catala = ast.literal_eval(read_file('Noms/excepcions comestibles catala.txt', 'r'))
-    excepcions_llati = ast.literal_eval(read_file('Noms/excepcions comestibles llati.txt', 'r'))
+    excepcions_catala = read_json_file('Noms/excepcions comestibles catala.txt', 'r')
+    excepcions_llati = read_json_file('Noms/excepcions comestibles llati.txt', 'r')
 
     for nom in excepcions_catala:
         bolets_comestibles.remove(nom)
@@ -87,6 +91,6 @@ def main():
     bolets = dict(zip(noms_llati, bolets_comestibles))
 
     save_content_to_file(bolets,"Noms/bolets comestibles.txt","w")
-    
+
 if __name__ == '__main__':
     main()

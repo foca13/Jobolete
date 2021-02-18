@@ -17,12 +17,12 @@ def remove_replicates(path):
 def main(species):
     for item in species:
         remove_replicates(item)
-    
+
 if name == __main__:
     path = str(input("Quines imatges vols netejar? 'Bolets Comestibles', 'Bolets Verinosos' o 'altres':"))
     if path != 'Bolets Comestibles' and path != 'Bolets Verinosos':
         path = str(input("Directori a netejar:"))
-    else:t
+    else:
         species = ['Images/' + path + '/' + file + '/' for file in os.listdir('Images/' + path + '/')]
-    
+
     main(species)
