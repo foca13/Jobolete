@@ -27,7 +27,6 @@ def download_images(save_path, target_search, chromepath):
     idx = 1
 
     for img in images:
-        imagename = save_path + 'image_' + str(idx) + '.jpg'
         src = img.get_attribute('src')
         if not src:
             src = img.get_attribute('data-src')
@@ -35,6 +34,7 @@ def download_images(save_path, target_search, chromepath):
             try:
                 response = requests.get(src)
                 if response.status_code == 200:
+                    imagename = save_path + 'image_' + str(idx) + '.jpg'
                     save_content_to_file(response.content, imagename, 'wb')
                     idx += 1
             except:
@@ -48,10 +48,10 @@ def download_images(save_path, target_search, chromepath):
 
     for img in images_jpg:
         imageurl = 'https:' + img + '.jpg'
-        imagename = save_path + 'image_' + str(idx) + '.jpg'
         try:
             response = requests.get(imageurl)
             if response.status_code == 200:
+                imagename = save_path + 'image_' + str(idx) + '.jpg'
                 save_content_to_file(response.content, imagename, 'wb')
                 idx += 1
         except:
@@ -59,10 +59,10 @@ def download_images(save_path, target_search, chromepath):
 
     for img in images_jpeg:
         imageurl = 'https:' + img + '.jpeg'
-        imagename = save_path + 'image_' + str(idx) + '.jpg'
         try:
             response = requests.get(imageurl)
             if response.status_code == 200:
+                imagename = save_path + 'image_' + str(idx) + '.jpg'
                 save_content_to_file(response.content, imagename, 'wb')
                 idx += 1
         except:
@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
     contents = read_file(file_name, "r")
     list_of_names = ast.literal_eval(contents).keys()
-    
+
     for name in list_of_names:
         save_location = save_directory + name + '/'
         makedir(save_location)
