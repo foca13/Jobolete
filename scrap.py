@@ -65,8 +65,9 @@ def get_latin_names(names):
 
 def main():
     
-    # carreguem les url amb tota la informació per trobar els noms dels bolets 
-    df = pd.read_pickle('Noms/url comestibles')
+    # CAT: carreguem el dataframe amb les url i tota la informació necessària per trobar els noms dels bolets
+    # EN: we load the dataframe with the urls and all the information needed to find the names of the mushrooms
+    df = pd.read_pickle('Noms/url_comestibles')
 
     bolets_comestibles = []
 
@@ -78,24 +79,27 @@ def main():
 
     bolets_comestibles += ['Bolet de tinta','Mollerons','Cogomella']
 
-    excepcions_catala = read_json_file('Noms/excepcions comestibles catala.txt', 'r')
-    excepcions_llati = read_json_file('Noms/excepcions comestibles llati.txt', 'r')
+    excepcions_catala = read_json_file('Noms/excepcions_comestibles_catala.txt', 'r')
+    excepcions_llati = read_json_file('Noms/excepcions_comestibles_llati.txt', 'r')
 
-    for nom in excepcions_catala:
-        bolets_comestibles.remove(nom)
+    bolets_comestibles = list(set(bolets_comestibles).difference(set(excepcions_catala)))
         
-    # afegim la paraula 'bolet' al final de cada nom per facilitar la cerca a google. Per exemple, els bolets
+    # CAT: afegim la paraula 'bolet' al final de cada nom per facilitar la cerca a google. Per exemple, els bolets
     # 'Camperol' o 'Coliflor' són més fàcils de trobar si cerquem 'Camperol bolet' o 'Colifor bolet'. També es
     # podria afegir directament dins la funció get_latin_names
+    # EN: we add the word 'bolet' (mushroom) at the end of each name to facilitate the google search. For example,
+    # it is easier to find 'Camperol bolet' or 'Coliflor bolet' than 'Camperol' (Peasant) or 'Coliflor' (Cauliflower).
+    # This could also be done inside the get_latin_names function
     cerca_bolets = [bolet + ' bolet' for bolet in bolets_comestibles]
 
     # aquests noms els traiem definitivament
+    # we remove these names
     diferencies = ['Tòfona','Cigró','Gastronomia dels bolets','Llenega','Terfeziàcies']
 
-    for nom in diferencies:
-        excepcions_catala.remove(nom)
+    excepcions_catala = list(set(excepcions_catala).difference(set(diferencies)))
 
     # busquem els noms en llatí
+    # we search for the names in latin
     noms_llati = get_latin_names(cerca_bolets)
 
     bolets_comestibles += excepcions_catala
@@ -104,7 +108,8 @@ def main():
     bolets = dict(zip(noms_llati, bolets_comestibles))
 
     # guardem el diccionari final com una string en un arxiu .txt
-    save_content_to_file(str(bolets),"Noms/bolets comestibles.txt","w")
+    # we save the final dictionary as a string in a .txt file
+    save_content_to_file(str(bolets),"Noms/bolets_comestibles.txt","w")
 
 if __name__ == '__main__':
     makedir("Noms/")

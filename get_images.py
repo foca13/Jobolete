@@ -72,8 +72,8 @@ if __name__ == '__main__':
 
     chromepath = os.getcwd() + '/chromedriver'
     path = str(input("Escull 'Bolets Comestibles','Bolets Verinosos' o 'altres':"))
-    save_directory = 'Imatges/' + path + '/'
-    file_name ='Noms/' + path.lower() +'.txt'
+    save_directory = 'Imatges_Bolets/' + path.title().replace(' ', '_') + '/'
+    file_name ='Noms/' + path.lower().replace(' ', '_') +'.txt'
 
     while path != 'Bolets Comestibles' and path != 'Bolets Verinosos':
         if path.lower() != 'altres':
@@ -85,8 +85,8 @@ if __name__ == '__main__':
             break
         elif answer == 'no':
             path = str(input("Escull 'Bolets Comestibles', 'Bolets Verinosos' o 'altres':"))
-            save_directory = 'Imatges/' + path + '/'
-            file_name ='Noms/' + path.lower() +'.txt'
+            save_directory = 'Imatges_Bolets/' + path.title().replace(' ', '_') + '/'
+            file_name ='Noms/' + path.lower().replace('', '_') +'.txt'
             continue
         else:
             raise ValueError("El valor d'entrada és incorrecte")
